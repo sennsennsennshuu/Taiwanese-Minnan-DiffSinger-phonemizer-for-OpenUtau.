@@ -1,0 +1,13 @@
+{
+  "target": "\u7528\u6237 OpenUtau 0.1.572.3 / net10.0",
+  "dll_sha256": "014490ca3dcf1d18cec463f349313d23660550729c2f6e56fd09b16fd8597d7a",
+  "host_core_sha256": "4b46b79caf58a31eea9add7b4fef6be4142e7f185443150e75db3d693f00ae84",
+  "lexicon_sha256": "ce853c93fd91141de179d3651fdd9d914a25987c8ca924e4575d7f8f421c69c5",
+  "semantic_aliases_sha256": "7330b6f3d133e8e3d0cb1aff1ac3f53cbeb25119473acf6bf12d8e49c9b8b7da",
+  "phrase_aliases_sha256": "cae6ac6a4756d1c2cfdf9e7c44b84dff42ac294fedce12b3e40da28771a616d7",
+  "phrase_aliases": 44,
+  "semantic_aliases": 1038,
+  "semantic_canonical_aliases": 673,
+  "contraction_policy": "keep_original_note_groups_sustain_nucleus_move_coda"
+}
+
