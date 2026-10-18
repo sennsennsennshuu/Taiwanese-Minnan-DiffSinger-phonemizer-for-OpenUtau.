@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DiffSingerZhNanTw</name>
+    </assembly>
+    <members>
+        <member name="T:MinnanTw.OpenUtau.DiffSingerZhNanTwPhonemizer">
+            <summary>简繁台语和台罗前端；复用宿主 DiffSinger 的时长推理、音符分配及音素输出。</summary>
+        </member>
+        <member name="M:MinnanTw.OpenUtau.DiffSingerZhNanTwPhonemizer.QueryForeign(System.String)">
+            <summary>精简类型表不含词条，显式其他语言输入必须查询该语言的完整字典。</summary>
+        </member>
+        <member name="M:MinnanTw.OpenUtau.DiffSingerZhNanTwPhonemizer.PreparePhrase(OpenUtau.Api.Phonemizer.Note[][],MinnanTw.OpenUtau.TailoLexicon,System.Func{System.String,System.String},System.Func{System.String,System.String[]})">
+            <summary>建立内部副本，避免修改用户工程中汉字、发音提示和音符属性。</summary>
+        </member>
+        <member name="T:MinnanTw.OpenUtau.TailoLexicon">
+            <summary>与宿主无关的字词查询层，保留来源逐音节边界及同级异读。</summary>
+        </member>
+        <member name="T:MinnanTw.OpenUtau.TailoLexicon.Reading">
+            <summary>一条读音及其汉字到音节的边界。Spans 的长度等于汉字元素数。</summary>
+        </member>
+        <member name="M:MinnanTw.OpenUtau.TailoLexicon.Reading.#ctor(System.String[][],System.String[],System.Int32[],System.String,System.String)">
+            <summary>一条读音及其汉字到音节的边界。Spans 的长度等于汉字元素数。</summary>
+        </member>
+        <member name="T:MinnanTw.OpenUtau.TailoLexicon.Word">
+            <summary>
+            词条的默认选择与保底选择。
+            Preferred 为 -1 表示来源同级异读，Fallback 仍提供确定性的低置信度入口。
+            </summary>
+        </member>
+        <member name="M:MinnanTw.OpenUtau.TailoLexicon.Word.#ctor(System.Int32,System.Int32,MinnanTw.OpenUtau.TailoLexicon.Reading[])">
+            <summary>
+            词条的默认选择与保底选择。
+            Preferred 为 -1 表示来源同级异读，Fallback 仍提供确定性的低置信度入口。
+            </summary>
+        </member>
+        <member name="T:MinnanTw.OpenUtau.TailoLexicon.HanResolution">
+            <summary>词组解析结果，允许一字多音节和多字合音。</summary>
+        </member>
+        <member name="M:MinnanTw.OpenUtau.TailoLexicon.HanResolution.#ctor(System.String[],System.String[][],System.Int32[],System.String,System.String)">
+            <summary>词组解析结果，允许一字多音节和多字合音。</summary>
+        </member>
+        <member name="T:MinnanTw.OpenUtau.TailoLexicon.SemanticAlias">
+            <summary>
+            普通话词义对应的台语习惯词。SourceText 只用于显示和边界，TargetText
+            必须是已经收录在台语字词索引中的词条，避免语义转换绕过音素字典。
+            </summary>
+        </member>
+        <member name="M:MinnanTw.OpenUtau.TailoLexicon.SemanticAlias.#ctor(System.String,System.String,MinnanTw.OpenUtau.TailoLexicon.Reading,System.String)">
+            <summary>
+            普通话词义对应的台语习惯词。SourceText 只用于显示和边界，TargetText
+            必须是已经收录在台语字词索引中的词条，避免语义转换绕过音素字典。
+            </summary>
+        </member>
+        <member name="M:MinnanTw.OpenUtau.TailoLexicon.IsVowel(System.String)">
+            <summary>查询当前合法台罗字典中的实际韵核，用于跨音符延续同一音节。</summary>
+        </member>
+        <member name="M:MinnanTw.OpenUtau.TailoLexicon.LoadPhraseAliases(System.IO.TextReader)">
+            <summary>
+            加载限定词组的句式规则。目标由空格分隔的原生词条组成，允许用 @数字台罗
+            固定文白读；只查询原生词库，绝不递归翻译或创造词库外音节。
+            四列依次为源短语、目标词块、输入字音节数、人工整理原因。
+            </summary>
+        </member>
+        <member name="M:MinnanTw.OpenUtau.TailoLexicon.LoadSemanticAliases(System.IO.TextReader)">
+            <summary>
+            读取可审计的语义别名表：源词、目标台语词、音节边界、原因、数字台罗。
+            在加载时固定目标原生读音并校验音节表；目标不会再次经过语义转换。
+            </summary>
+        </member>
+        <member name="M:MinnanTw.OpenUtau.TailoLexicon.WordElementCount(System.String)">
+            <summary>计算词条的汉字元素数；轻声前缀 `--` 只表示边界，不占一个元素。</summary>
+        </member>
+        <member name="M:MinnanTw.OpenUtau.TailoLexicon.Select(System.String,MinnanTw.OpenUtau.TailoLexicon.Word,System.String)">
+            <summary>
+            选择词条读音。用户显式选择和唯一最佳来源永远优先；同级异读没有显式选择时，
+            使用构建阶段按证据排序的 fallback，并把结果降为 low 置信度。
+            </summary>
+        </member>
+        <member name="M:MinnanTw.OpenUtau.TailoLexicon.Resolve(System.String)">
+            <summary>识别单个歌词输入，支持明确的字词选音和无调/数字台罗。</summary>
+        </member>
+        <member name="M:MinnanTw.OpenUtau.TailoLexicon.ResolveHan(System.String)">
+            <summary>
+            词组划分采用动态规划：优先覆盖全部歌词，再优先较少词段（长词）。
+            同级异读优先使用索引中的 fallback；该结果会由 Select 标记为 low，
+            用户显式选择和唯一最佳来源仍然优先。
+            </summary>
+        </member>
+        <member name="M:MinnanTw.OpenUtau.TailoLexicon.ResolveHanDetailed(System.String,System.Boolean)">
+            <summary>
+            解析汉字词组并保留输入字边界。高置信度固定词仍整体匹配，低置信度组合词
+            不得吞掉内部明确的普通话习惯词；关闭 useSemanticAliases 可恢复原字读法。
+            </summary>
+        </member>
+        <member name="M:MinnanTw.OpenUtau.TailoLexicon.ProjectAliasSpans(System.String,System.String,System.Int32[])">
+            <summary>等长词沿用原生边界；长度变化按顺序投影，零音节位置由宿主接成延音。</summary>
+        </member>
+    </members>
+</doc>
+
